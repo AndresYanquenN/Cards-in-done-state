@@ -72,6 +72,8 @@ let talentSquad=[];
 let uggSquad=[];
 let genomeSquad=[];
 
+var Squads = [workSquad, talentSquad, uggSquad, genomeSquad]
+
 
 const requestFunction = async( squadBody )=>{
     const resultTemp= await fetch(apiURL, request(body(next_cursor, result_hash_more,squadBody )))
@@ -97,25 +99,37 @@ const requestFunction = async( squadBody )=>{
 }
 
 
-
-/* for (let i=0; i<listSquads.length;i++){
-    
-    await requestFunction(listSquads[i]);
-
-
-    while(result_hash_more!=false){
-        await requestFunction();
-    
-    }
-} */
+var result;
 var trigger = true;
-const trigger_hash_more = () =>{
-    result_hash_more=false;
+const trigger_hash_more = (props) =>{
+    if(props){
+        result_hash_more=true;
+        trigger=true;
+    }else{
+        result_hash_more=false;
+    }
 }
 
-var result;
-console.log(listSquads[0])
-while(result_hash_more!=false){
+for (let i=0; i<listSquads.length;i++){
+    console.log("Current Squad: "+listSquads[i])
+    trigger_hash_more(true);
+    while(result_hash_more!=false){
+        if(trigger){
+            trigger_hash_more(false);
+            trigger = false;
+        }
+        result = await requestFunction(listSquads[i]);
+        Squads[i] = [...Squads[i],...result]
+    
+    }
+    console.log(500,Squads[i].length);
+} 
+
+
+
+
+
+/* while(result_hash_more!=false){
     if(trigger){
         trigger_hash_more();
         trigger = false;
@@ -123,10 +137,9 @@ while(result_hash_more!=false){
     result = await requestFunction(listSquads[0]);
     workSquad = [...workSquad,...result]
 
-}
+} */
 
 
 var counter=0;
 
 
-console.log(500,workSquad.length);
