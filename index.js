@@ -16,7 +16,7 @@ const request = (body) => {
     }
 }
 
-const body= (next_cursor, has_more, squad) =>{
+const body= (next_cursor, has_more, squadBody) =>{
     let content =  {
         "filter": {
             "and": [
@@ -29,7 +29,7 @@ const body= (next_cursor, has_more, squad) =>{
                 {
                     "property": "Squad",
                     "multi_select": {
-                        "contains": "Work squad"
+                        "contains": `${squadBody}`
                     }
                 }
             ]
@@ -49,7 +49,7 @@ const body= (next_cursor, has_more, squad) =>{
                 {
                     "property": "Squad",
                     "multi_select": {
-                        "contains": "Work squad"
+                        "contains": `${squadBody}`
                     }
                 }
             ]
@@ -65,16 +65,19 @@ const body= (next_cursor, has_more, squad) =>{
     }
 }
 
-var result_hash_more=false;
+var result_hash_more=true;
 var next_cursor='';
 let workSquad=[];
+let talentSquad=[];
+let uggSquad=[];
+let genomeSquad=[];
 
 
-const requestFunction = async()=>{
-    const resultTemp= await fetch(apiURL, request(body(next_cursor, result_hash_more)))
+const requestFunction = async( squadBody )=>{
+    const resultTemp= await fetch(apiURL, request(body(next_cursor, result_hash_more,squadBody )))
     .then(response => response.json())
     .then(response => {return (response)});
-    console.log(100,resultTemp.has_more);
+    console.log(100,'cursors? '+resultTemp.has_more);
 
     if(resultTemp.has_more){
         next_cursor=resultTemp.next_cursor;
@@ -82,17 +85,43 @@ const requestFunction = async()=>{
     }else{
         result_hash_more=resultTemp.has_more;
     }
+/*     if( squadVar && squadVar.length != 0){
+        squadVar = [...squadVar,...resultTemp.results]
+    }else{
+        squadVar = resultTemp.results
+    } */
+
     
-    workSquad = [...workSquad, ...resultTemp.results]
-    console.log(workSquad.length)    
+    return resultTemp.results;
     
 }
 
-await requestFunction();
 
 
+/* for (let i=0; i<listSquads.length;i++){
+    
+    await requestFunction(listSquads[i]);
+
+
+    while(result_hash_more!=false){
+        await requestFunction();
+    
+    }
+} */
+var trigger = true;
+const trigger_hash_more = () =>{
+    result_hash_more=false;
+}
+
+var result;
+console.log(listSquads[0])
 while(result_hash_more!=false){
-    await requestFunction();
+    if(trigger){
+        trigger_hash_more();
+        trigger = false;
+    }
+    result = await requestFunction(listSquads[0]);
+    workSquad = [...workSquad,...result]
 
 }
 
@@ -100,4 +129,4 @@ while(result_hash_more!=false){
 var counter=0;
 
 
-console.log(workSquad.length);
+console.log(500,workSquad.length);
