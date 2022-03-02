@@ -15,15 +15,20 @@ const request = (body) => {
         body: JSON.stringify(body)
     }
 }
+const pull_request_merged ="📦 Pull request merged" 
+const pull_request ="🧐  Pull request"; 
+const done ="✅   Done"; 
+const optimization_analysis ="🏃 Optimization analysis";
+const feature_flag_release="🚩 Feature flag release";
 
-const body= (next_cursor, has_more, squadBody) =>{
+const body= (next_cursor, has_more, squadBody, bugOrDone) =>{
     let content =  {
         "filter": {
             "and": [
                 {
                     "property": "Stage",
                     "select": {
-                        "equals": "✅   Done"
+                        "equals": `${bugOrDone}`
                     }
                 },
                 {
@@ -43,7 +48,7 @@ const body= (next_cursor, has_more, squadBody) =>{
                 {
                     "property": "Stage",
                     "select": {
-                        "equals": "✅   Done"
+                        "equals": `${bugOrDone}`
                     }
                 },
                 {
@@ -65,18 +70,11 @@ const body= (next_cursor, has_more, squadBody) =>{
     }
 }
 
-var result_hash_more=true;
-var next_cursor='';
-let workSquad=[];
-let talentSquad=[];
-let uggSquad=[];
-let genomeSquad=[];
-
-var Squads = [workSquad, talentSquad, uggSquad, genomeSquad]
 
 
-const requestFunction = async( squadBody )=>{
-    const resultTemp= await fetch(apiURL, request(body(next_cursor, result_hash_more,squadBody )))
+console.log(done);
+const requestFunction = async( squadBody, bugOrDone )=>{
+    const resultTemp= await fetch(apiURL, request(body(next_cursor, result_hash_more,squadBody,bugOrDone )))
     .then(response => response.json())
     .then(response => {return (response)});
     console.log(100,'cursors? '+resultTemp.has_more);
@@ -110,6 +108,51 @@ const trigger_hash_more = (props) =>{
     }
 }
 
+var result_hash_more=true;
+var next_cursor='';
+let workSquadDone=[];
+let talentSquadDone=[];
+let uggSquadDone=[];
+let genomeSquadDone=[];
+
+var SquadsDone = [workSquadDone, talentSquadDone, uggSquadDone, genomeSquadDone]
+
+let workSquadPullRequest=[];
+let talentSquadPullRequest=[];
+let uggSquadPullRequest=[];
+let genomeSquadPullRequest=[];
+
+var SquadsPullRequest = [workSquadPullRequest, talentSquadPullRequest, uggSquadPullRequest, genomeSquadPullRequest]
+
+let workSquadPullRequestMerge=[];
+let talentSquadPullRequestMerge=[];
+let uggSquadPullRequestMerge=[];
+let genomeSquadPullRequestMerge=[];
+
+var SquadsPullRequestMerge = [workSquadPullRequestMerge, talentSquadPullRequestMerge, uggSquadPullRequestMerge, genomeSquadPullRequestMerge]
+
+let workSquadFeatureFlagRelease=[];
+let talentSquadFeatureFlagRelease=[];
+let uggSquadFeatureFlagRelease=[];
+let genomeSquadFeatureFlagRelease=[];
+
+var SquadsFeatureFlagRelease = [workSquadFeatureFlagRelease, talentSquadFeatureFlagRelease, uggSquadFeatureFlagRelease, genomeSquadFeatureFlagRelease]
+
+optimization_analysis
+
+let workSquadOptimization_analysis=[];
+let talentSquadOptimization_analysis=[];
+let uggSquadOptimization_analysis=[];
+let genomeSquadOptimization_analysis=[];
+
+var SquadsOptimization_analysis = [workSquadOptimization_analysis, talentSquadOptimization_analysis, uggSquadOptimization_analysis, genomeSquadOptimization_analysis]
+
+
+
+
+console.log(done);
+console.log("Cards en ---------------------------------- done");
+
 for (let i=0; i<listSquads.length;i++){
     console.log("Current Squad: "+listSquads[i])
     trigger_hash_more(true);
@@ -118,12 +161,87 @@ for (let i=0; i<listSquads.length;i++){
             trigger_hash_more(false);
             trigger = false;
         }
-        result = await requestFunction(listSquads[i]);
-        Squads[i] = [...Squads[i],...result]
+        result = await requestFunction(listSquads[i], done);
+        SquadsDone[i] = [...SquadsDone[i],...result]
     
     }
-    console.log(500,Squads[i].length);
+    console.log(500,SquadsDone[i].length);
 } 
+
+console.log(pull_request);
+console.log("Cards en ---------------------------------- pullrequest");
+
+for (let i=0; i<listSquads.length;i++){
+    console.log("Current Squad: "+listSquads[i])
+    trigger_hash_more(true);
+    while(result_hash_more!=false){
+        if(trigger){
+            trigger_hash_more(false);
+            trigger = false;
+        }
+        result = await requestFunction(listSquads[i], pull_request);
+        SquadsPullRequest[i] = [...SquadsPullRequest[i],...result]
+    
+    }
+    console.log(500,SquadsPullRequest[i].length);
+} 
+
+console.log(pull_request_merged);
+console.log("Cards en ---------------------------------- pullrequestMerge");
+
+for (let i=0; i<listSquads.length;i++){
+    console.log("Current Squad: "+listSquads[i])
+    trigger_hash_more(true);
+    while(result_hash_more!=false){
+        if(trigger){
+            trigger_hash_more(false);
+            trigger = false;
+        }
+        result = await requestFunction(listSquads[i], pull_request_merged);
+        SquadsPullRequestMerge[i] = [...SquadsPullRequestMerge[i],...result]
+    
+    }
+    console.log(500,SquadsPullRequestMerge[i].length);
+} 
+
+console.log(feature_flag_release);
+console.log("Cards en ---------------------------------- feature_flag_release");
+
+
+for (let i=0; i<listSquads.length;i++){
+    console.log("Current Squad: "+listSquads[i])
+    trigger_hash_more(true);
+    while(result_hash_more!=false){
+        if(trigger){
+            trigger_hash_more(false);
+            trigger = false;
+        }
+        result = await requestFunction(listSquads[i], feature_flag_release);
+        SquadsFeatureFlagRelease[i] = [...SquadsFeatureFlagRelease[i],...result]
+    
+    }
+    console.log(500,SquadsFeatureFlagRelease[i].length);
+} 
+
+console.log(optimization_analysis);
+console.log("Cards en ---------------------------------- optimization analysis");
+
+for (let i=0; i<listSquads.length;i++){
+    console.log("Current Squad: "+listSquads[i])
+    trigger_hash_more(true);
+    while(result_hash_more!=false){
+        if(trigger){
+            trigger_hash_more(false);
+            trigger = false;
+        }
+        result = await requestFunction(listSquads[i], feature_flag_release);
+        SquadsOptimization_analysis[i] = [...SquadsOptimization_analysis[i],...result]
+    
+    }
+    console.log(500,SquadsOptimization_analysis[i].length);
+} 
+
+
 
 
 
@@ -140,6 +258,6 @@ for (let i=0; i<listSquads.length;i++){
 } */
 
 
-var counter=0;
+
 
 
